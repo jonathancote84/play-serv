@@ -10,12 +10,12 @@ app.use(cors());
 const playstore = require('./playstore');
 
 app.get('/apps', (req, res) => {
-    const { genres="", sort } = req.query;
+    const { genres="", order  } = req.query;
 
 // sort in query 
-    if(sort) {
+    if(order) {
         // if not rating or app in sort 
-        if(!['rating','app'].includes(sort)) {
+        if(!['Rating','App'].includes(order)) {
             return res 
                 .status(400)
                 .send( 'Sort must be rating or app' );
@@ -31,22 +31,27 @@ app.get('/apps', (req, res) => {
     }
     
     let results = playstore
-        .filter(playstore => 
-            playstore
+            .filter(movie => movie
                 .Genres
                 .toLowerCase()
-                .includes(search.toLowerCase()))
+                .includes(genres.toLowerCase()));
+                
 
-    if(sort !== "") {
-        results.sort((a, b) => {
-                return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
-            })
+        // .filter(playstore => 
+        //     playstore
+        //         .Genres
+        //         .toLowerCase()
+        //         filter has to have boolean 
+
+
+    if(order) {
+        results.sort((a, b) => a[order] > b[order] ? 1 : a[order] < b[order] ? -1 : 0) 
+
     }
-  
     res 
         .json(results);
 });
 
-app.listen(8000, () => {
-    console.log('Server started on PORT 8000');
-});
+
+
+module.exports = app;
